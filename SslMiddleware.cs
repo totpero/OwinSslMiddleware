@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin;
@@ -30,17 +29,17 @@ namespace mvlSite.SslMiddleware
 
         private async Task RedirectToHttps(IOwinContext context)
         {
-            var tmpMethod = new HttpMethod(context.Request.Method);
+            var tmpMethod = context.Request.Method;
             var uri = new UriBuilder(context.Request.Uri)
             {
                 Scheme = Uri.UriSchemeHttps,
                 Port = _sslPort
             };
 
-            if (tmpMethod == HttpMethod.Get || tmpMethod == HttpMethod.Head)
+            if (tmpMethod == WebRequestMethods.Http.Get || tmpMethod == WebRequestMethods.Http.Head)
             {
                 context.Response.Redirect(uri.Uri.ToString());
-                if (tmpMethod == HttpMethod.Get)
+                if (tmpMethod == WebRequestMethods.Http.Get)
                     await SetRedirectMessage(context, uri);
             }
             else
